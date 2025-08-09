@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas y Cálculos Mágicos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8ecae6;
+            --secondary-color: #219ebc;
+            --accent-color: #ffb703;
+            --background-color: #fefae0;
+            --text-color: #023047;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --card-color: #ffffff;
+        }
+
+        .ghibli-theme {
+            --primary-color: #c8e0d8;
+            --secondary-color: #8fb3a5;
+            --accent-color: #f4a261;
+            --background-color: #f7f7f2;
+            --text-color: #2a363b;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --card-color: #ffffff;
+        }
+
+        .dark-theme {
+            --primary-color: #3a506b;
+            --secondary-color: #5bc0be;
+            --accent-color: #fde74c;
+            --background-color: #1c2541;
+            --text-color: #ffffff;
+            --shadow-color: rgba(255, 255, 255, 0.1);
+            --card-color: #0b132b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M30,30 Q50,20 70,30 T90,50 Q80,70 70,60 T30,70 Q20,50 30,30 Z" fill="%238ecae650"/></svg>');
+            background-size: 200px;
+            background-repeat: repeat;
+        }
+
+        h1, h2, h3 {
+            color: var(--text-color);
+            text-shadow: 2px 2px 4px var(--shadow-color);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+            margin: 10px auto;
+            border-radius: 2px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: var(--card-color);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--primary-color);
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color), var(--accent-color));
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--primary-color);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        textarea, input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            font-size: 1rem;
+            font-family: 'Patrick Hand', cursive;
+            background-color: rgba(255, 255, 255, 0.7);
+            color: var(--text-color);
+        }
+
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: var(--secondary-color);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px var(--shadow-color);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.primary {
+            background-color: var(--secondary-color);
+        }
+
+        button.secondary {
+            background-color: var(--accent-color);
+        }
+
+        button.danger {
+            background-color: #e63946;
+        }
+
+        .history {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            border: 1px solid var(--primary-color);
+        }
+
+        .history-item {
+            border-bottom: 1px solid var(--primary-color);
+            padding: 12px 0;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .history-item::before {
+            content: "✏️";
+            position: absolute;
+            left: -5px;
+            top: 12px;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .history-date {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        .history-content {
+            margin-left: 10px;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .result-box {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .theme-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .theme-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: transform 0.2s;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-option.active {
+            border-color: var(--text-color);
+        }
+
+        .custom-color-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .color-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .color-option label {
+            font-size: 0.9rem;
+        }
+
+        .color-input {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--text-color);
+            cursor: pointer;
+        }
+
+        .floating-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .floating-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .floating-button:hover {
+            transform: scale(1.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .character {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="40" r="25" fill="%23ffd166"/><circle cx="40" cy="35" r="3" fill="%23232f34"/><circle cx="60" cy="35" r="3" fill="%23232f34"/><path d="M45,50 Q50,55 55,50" stroke="%23232f34" stroke-width="2" fill="none"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        /* Animaciones */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="character" style="top: 10%; left: 5%;"></div>
+    <div class="character floating" style="top: 20%; right: 8%; transform: scale(0.8);"></div>
+    <div class="character" style="bottom: 10%; left: 10%; transform: scale(1.2);"></div>
+
+    <h1>📝 Notas y Cálculos Mágicos</h1>
+
+    <div class="theme-selector">
+        <div class="theme-option active" style="background: linear-gradient(135deg, #8ecae6, #219ebc, #ffb703);" onclick="setTheme('default')" title="Tema Predeterminado"></div>
+        <div class="theme-option" style="background: linear-gradient(135deg, #c8e0d8, #8fb3a5, #f4a261);" onclick="setTheme('ghibli')" title="Tema Ghibli"></div>
+        <div class="theme-option" style="background: linear-gradient(135deg, #3a506b, #5bc0be, #fde74c);" onclick="setTheme('dark')" title="Tema Oscuro"></div>
+        <button onclick="showColorPicker()" style="padding: 5px 10px; font-size: 0.8rem; background: var(--accent-color);">Personalizar</button>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2><i class="fas fa-feather-alt"></i> Mis Notas</h2>
+            <textarea id="nota" rows="4" placeholder="Escribe tus pensamientos, ideas o recordatorios aquí..."></textarea>
+            <div class="button-group">
+                <button class="primary" onclick="guardarNota()"><i class="fas fa-save"></i> Guardar Nota</button>
+                <button onclick="limpiarNota()"><i class="fas fa-broom"></i> Limpiar</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-calculator"></i> Calculadora Mágica</h2>
+            <div class="calculator-grid">
+                <div>
+                    <label for="precio1">Primer valor:</label>
+                    <input type="number" id="precio1" placeholder="Ej: 12.50">
+                </div>
+                <div>
+                    <label for="precio2">Segundo valor:</label>
+                    <input type="number" id="precio2" placeholder="Ej: 8.75">
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="secondary" onclick="calcular('suma')"><i class="fas fa-plus"></i> Sumar</button>
+                <button class="secondary" onclick="calcular('resta')"><i class="fas fa-minus"></i> Restar</button>
+                <button class="secondary" onclick="calcular('multiplicacion')"><i class="fas fa-times"></i> Multiplicar</button>
+                <button class="secondary" onclick="calcular('division')"><i class="fas fa-divide"></i> Dividir</button>
+            </div>
+            <div id="resultado" class="result-box"></div>
+            <button class="primary" onclick="guardarCalculo()"><i class="fas fa-calculator"></i> Guardar Cálculo</button>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-history"></i> Historial Encantado</h2>
+            <div class="button-group">
+                <button onclick="mostrarHistorial('todo')"><i class="fas fa-list"></i> Todo</button>
+                <button onclick="mostrarHistorial('notas')"><i class="fas fa-sticky-note"></i> Solo Notas</button>
+                <button onclick="mostrarHistorial('calculos')"><i class="fas fa-calculator"></i> Solo Cálculos</button>
+                <button class="danger" onclick="limpiarHistorial()"><i class="fas fa-trash"></i> Borrar Todo</button>
+            </div>
+            <div class="history" id="historial">
+                <div class="empty-state">
+                    <i class="fas fa-cloud"></i>
+                    <p>Tu historial está vacío</p>
+                    <p>Comienza escribiendo una nota o haciendo un cálculo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-buttons">
+        <button class="floating-button" onclick="scrollToTop()" title="Ir arriba"><i class="fas fa-arrow-up"></i></button>
+        <button class="floating-button" onclick="mostrarAyuda()" title="Ayuda"><i class="fas fa-question"></i></button>
+    </div>
+
+    <div id="color-picker-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: var(--card-color); padding: 20px; border-radius: 10px; max-width: 400px; width: 90%;">
+            <h2 style="margin-bottom: 15px;">Personalizar colores</h2>
+            <div class="custom-color-picker">
+                <div class="color-option">
+                    <label>Principal:</label>
+                    <input type="color" id="color-primary" class="color-input" value="#8ecae6">
+                </div>
+                <div class="color-option">
+                    <label>Secundario:</label>
+                    <input type="color" id="color-secondary" class="color-input" value="#219ebc">
+                </div>
+                <div class="color-option">
+                    <label>Acento:</label>
+                    <input type="color" id="color-accent" class="color-input" value="#ffb703">
+                </div>
+                <div class="color-option">
+                    <label>Fondo:</label>
+                    <input type="color" id="color-background" class="color-input" value="#fefae0">
+                </div>
+                <div class="color-option">
+                    <label>Texto:</label>
+                    <input type="color" id="color-text" class="color-input" value="#023047">
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <button onclick="aplicarColoresPersonalizados()" style="background: var(--secondary-color);"><i class="fas fa-check"></i> Aplicar</button>
+                <button onclick="ocultarColorPicker()" style="background: var(--accent-color);"><i class="fas fa-times"></i> Cancelar</button>
+                <button onclick="resetColores()" style="background: #e63946;"><i class="fas fa-undo"></i> Restablecer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="help-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: var(--card-color); padding: 20px; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <h2 style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span><i class="fas fa-question-circle"></i> Ayuda</span>
+                <button onclick="ocultarAyuda()" style="background: none; border: none; color: var(--text-color); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </h2>
+            <div style="margin-bottom: 15px;">
+                <h3><i class="fas fa-feather-alt"></i> Notas</h3>
+                <p>Escribe cualquier nota, idea o recordatorio en el área de texto. Puedes guardarla para consultarla más tarde.</p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <h3><i class="fas fa-calculator"></i> Calculadora</h3>
+                <p>Ingresa dos valores y selecciona la operación que deseas realizar (suma, resta, multiplicación o división). El resultado aparecerá debajo.</p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <h3><i class="fas fa-history"></i> Historial</h3>
+                <p>Tus notas y cálculos guardados aparecerán aquí. Puedes filtrarlos por tipo (notas, cálculos o todo) y borrar el historial completo si lo deseas.</p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <h3><i class="fas fa-palette"></i> Personalización</h3>
+                <p>Selecciona entre los temas predefinidos o personaliza los colores a tu gusto usando el selector de colores.</p>
+            </div>
+            <button onclick="ocultarAyuda()" style="width: 100%; padding: 10px; background: var(--secondary-color); color: white; border: none; border-radius: 5px; margin-top: 10px;">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentTheme = 'default';
+        let lastCalculation = null;
+
+        // Cargar al iniciar
+        window.onload = function() {
+            cargarTemaGuardado();
+            mostrarHistorial('todo');
+            agregarEfectos();
+        };
+
+        // Funciones de notas
+        function guardarNota() {
+            const nota = document.getElementById("nota").value.trim();
+            
+            if (!nota) {
+                mostrarNotificacion("Escribe una nota primero", "error");
+                return;
+            }
+
+            const historial = JSON.parse(localStorage.getItem("historial")) || [];
+            const registro = {
+                tipo: "nota",
+                fecha: new Date().toLocaleString(),
+                contenido: nota,
+                calculo: null
+            };
+            
+            historial.unshift(registro); // Agregar al inicio
+            localStorage.setItem("historial", JSON.stringify(historial));
+            
+            document.getElementById("nota").value = "";
+            mostrarHistorial('todo');
+            mostrarNotificacion("Nota guardada con éxito", "success");
+        }
+
+        function limpiarNota() {
+            document.getElementById("nota").value = "";
+        }
+
+        // Funciones de calculadora
+        function calcular(operacion) {
+            const p1 = parseFloat(document.getElementById("precio1").value) || 0;
+            const p2 = parseFloat(document.getElementById("precio2").value) || 0;
+            let resultado = 0;
+            let operacionSimbolo = "";
+            
+            switch(operacion) {
+                case 'suma':
+                    resultado = p1 + p2;
+                    operacionSimbolo = "+";
+                    break;
+                case 'resta':
+                    resultado = p1 - p2;
+                    operacionSimbolo = "-";
+                    break;
+                case 'multiplicacion':
+                    resultado = p1 * p2;
+                    operacionSimbolo = "×";
+                    break;
+                case 'division':
+                    resultado = p2 !== 0 ? p1 / p2 : "Error (división por cero)";
+                    operacionSimbolo = "÷";
+                    break;
+            }
+            
+            const resultadoElement = document.getElementById("resultado");
+            resultadoElement.style.display = "block";
+            
+            if (typeof resultado === 'number') {
+                resultadoElement.innerHTML = `
+                    <div style="font-size: 0.8em; margin-bottom: 5px;">${p1} ${operacionSimbolo} ${p2} =</div>
+                    <div style="font-size: 1.5em; font-weight: bold;">${resultado.toFixed(2)}</div>
+                `;
+                lastCalculation = { p1, p2, operacion, resultado };
+            } else {
+                resultadoElement.textContent = resultado;
+                lastCalculation = null;
+            }
+        }
+
+        function guardarCalculo() {
+            if (!lastCalculation) {
+                mostrarNotificacion("Realiza un cálculo primero", "error");
+                return;
+            }
+
+            const historial = JSON.parse(localStorage.getItem("historial")) || [];
+            const registro = {
+                tipo: "calculo",
+                fecha: new Date().toLocaleString(),
+                contenido: null,
+                calculo: lastCalculation
+            };
+            
+            historial.unshift(registro);
+            localStorage.setItem("historial", JSON.stringify(historial));
+            
+            mostrarHistorial('todo');
+            mostrarNotificacion("Cálculo guardado con éxito", "success");
+        }
+
+        // Funciones de historial
+        function mostrarHistorial(filtro) {
+            const historial = JSON.parse(localStorage.getItem("historial")) || [];
+            const contenedor = document.getElementById("historial");
+            
+            if (historial.length === 0) {
+                contenedor.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-cloud"></i>
+                        <p>Tu historial está vacío</p>
+                        <p>Comienza escribiendo una nota o haciendo un cálculo</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = "";
+            let itemsMostrados = 0;
+            
+            historial.forEach(item => {
+                if (filtro === 'todo' || 
+                    (filtro === 'notas' && item.tipo === 'nota') || 
+                    (filtro === 'calculos' && item.tipo === 'calculo')) {
+                    
+                    html += `
+                        <div class="history-item">
+                            <div class="history-date">
+                                <i class="fas ${item.tipo === 'nota' ? 'fa-sticky-note' : 'fa-calculator'}"></i>
+                                ${item.fecha}
+                            </div>
+                            <div class="history-content">
+                                ${item.tipo === 'nota' ? 
+                                    item.contenido : 
+                                    `${item.calculo.p1} ${getOperacionSymbol(item.calculo.operacion)} ${item.calculo.p2} = <strong>${item.calculo.resultado.toFixed(2)}</strong>`}
+                            </div>
+                        </div>
+                    `;
+                    itemsMostrados++;
+                }
+            });
+            
+            if (itemsMostrados === 0) {
+                html = `
+                    <div class="empty-state">
+                        <i class="fas fa-filter"></i>
+                        <p>No hay ${filtro === 'notas' ? 'notas' : 'cálculos'} en tu historial</p>
+                    </div>
+                `;
+            }
+            
+            contenedor.innerHTML = html;
+        }
+
+        function limpiarHistorial() {
+            if (confirm("¿Estás seguro de que quieres borrar todo el historial? Esta acción no se puede deshacer.")) {
+                localStorage.removeItem("historial");
+                mostrarHistorial('todo');
+                mostrarNotificacion("Historial borrado", "info");
+            }
+        }
+
+        // Funciones de tema y personalización
+        function setTheme(theme) {
+            currentTheme = theme;
+            
+            // Remover todas las clases de tema primero
+            document.body.classList.remove('ghibli-theme', 'dark-theme');
+            
+            if (theme === 'ghibli') {
+                document.body.classList.add('ghibli-theme');
+            } else if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.theme-option[onclick="setTheme('${theme}')"]`).classList.add('active');
+            
+            // Guardar preferencia
+            localStorage.setItem('themePreference', theme);
+        }
+
+        function cargarTemaGuardado() {
+            const savedTheme = localStorage.getItem('themePreference') || 'default';
+            setTheme(savedTheme);
+        }
+
+        function showColorPicker() {
+            document.getElementById('color-picker-modal').style.display = 'flex';
+        }
+
+        function ocultarColorPicker() {
+            document.getElementById('color-picker-modal').style.display = 'none';
+        }
+
+        function aplicarColoresPersonalizados() {
+            const root = document.documentElement;
+            
+            root.style.setProperty('--primary-color', document.getElementById('color-primary').value);
+            root.style.setProperty('--secondary-color', document.getElementById('color-secondary').value);
+            root.style.setProperty('--accent-color', document.getElementById('color-accent').value);
+            root.style.setProperty('--background-color', document.getElementById('color-background').value);
+            root.style.setProperty('--text-color', document.getElementById('color-text').value);
+            
+            // Cambiar a tema personalizado
+            currentTheme = 'custom';
+            document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
+            
+            ocultarColorPicker();
+            mostrarNotificacion("Colores personalizados aplicados", "success");
+        }
+
+        function resetColores() {
+            setTheme('default');
+            document.getElementById('color-primary').value = '#8ecae6';
+            document.getElementById('color-secondary').value = '#219ebc';
+            document.getElementById('color-accent').value = '#ffb703';
+            document.getElementById('color-background').value = '#fefae0';
+            document.getElementById('color-text').value = '#023047';
+        }
+
+        // Funciones auxiliares
+        function getOperacionSymbol(operacion) {
+            switch(operacion) {
+                case 'suma': return '+';
+                case 'resta': return '-';
+                case 'multiplicacion': return '×';
+                case 'division': return '÷';
+                default: return '';
+            }
+        }
+
+        function mostrarNotificacion(mensaje, tipo) {
+            const notificacion = document.createElement('div');
+            notificacion.textContent = mensaje;
+            notificacion.style.position = 'fixed';
+            notificacion.style.bottom = '20px';
+            notificacion.style.left = '50%';
+            notificacion.style.transform = 'translateX(-50%)';
+            notificacion.style.padding = '10px 20px';
+            notificacion.style.borderRadius = '5px';
+            notificacion.style.color = 'white';
+            notificacion.style.zIndex = '1000';
+            notificacion.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
+            
+            switch(tipo) {
+                case 'success':
+                    notificacion.style.backgroundColor = '#4CAF50';
+                    break;
+                case 'error':
+                    notificacion.style.backgroundColor = '#F44336';
+                    break;
+                case 'info':
+                    notificacion.style.backgroundColor = '#2196F3';
+                    break;
+                default:
+                    notificacion.style.backgroundColor = '#FF9800';
+            }
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                notificacion.style.transition = 'opacity 0.5s';
+                notificacion.style.opacity = '0';
+                setTimeout(() => notificacion.remove(), 500);
+            }, 3000);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function mostrarAyuda() {
+            document.getElementById('help-modal').style.display = 'flex';
+        }
+
+        function ocultarAyuda() {
+            document.getElementById('help-modal').style.display = 'none';
+        }
+
+        function agregarEfectos() {
+            // Agregar efecto de hover a los botones
+            const buttons = document.querySelectorAll('button:not(.floating-button)');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    button.style.transform = 'translateY(-2px)';
+                    button.style.boxShadow = '0 6px 8px var(--shadow-color)';
+                });
+                
+                button.addEventListener('mouseleave', () => {
+                    button.style.transform = '';
+                    button.style.boxShadow = '';
+                });
+            });
+            
+            // Agregar efecto de carga suave
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s';
+                document.body.style.opacity = '1';
+            }, 100);
+        }
+    </script>
+</body>
+</html>
